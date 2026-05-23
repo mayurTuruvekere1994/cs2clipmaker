@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gg.clipmaker.ui.MainViewController"
+            styleClass="root-pane">
+
+    <!-- TOP: Title bar + status -->
+    <top>
+        <VBox styleClass="top-bar">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <padding><Insets top="10" right="16" bottom="10" left="16"/></padding>
+                <Label text="CS2 CLIP MAKER" styleClass="app-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Circle fx:id="statusDot" radius="7" fill="LIMEGREEN"/>
+                <Label fx:id="statusLabel" text="Initialising..."
+                       styleClass="status-label" wrapText="true" maxWidth="420"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- LEFT: Controls + Settings -->
+    <left>
+        <VBox styleClass="sidebar" spacing="14" minWidth="240" maxWidth="260">
+            <padding><Insets top="16" right="12" bottom="16" left="12"/></padding>
+
+            <Label text="CONTROLS" styleClass="section-header"/>
+            <Button fx:id="btnStartManual" text="▶  Start Recording"
+                    onAction="#onStartManual" styleClass="btn-primary" maxWidth="Infinity"/>
+            <Button fx:id="btnStopManual" text="⏹  Stop and Process"
+                    onAction="#onStopManual" styleClass="btn-danger" maxWidth="Infinity"/>
+            <Button fx:id="btnOpenClipsFolder" text="Open Clips Folder"
+                    onAction="#onOpenClipsFolder" styleClass="btn-secondary" maxWidth="Infinity"/>
+
+            <Separator/>
+
+            <Label text="EFFECTS" styleClass="section-header"/>
+            <CheckBox fx:id="chkColorGrading"  text="Cinematic Colour Grade"    selected="true" styleClass="setting-check"/>
+            <CheckBox fx:id="chkTextOverlays"  text="Kill Count + Name Overlay"  selected="true" styleClass="setting-check"/>
+
+            <Separator/>
+
+            <Label text="CLIP TIMING" styleClass="section-header"/>
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Pre-roll (s):"  styleClass="setting-label" minWidth="92"/>
+                <Spinner fx:id="spnPreRoll"  prefWidth="70"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Post-roll (s):" styleClass="setting-label" minWidth="92"/>
+                <Spinner fx:id="spnPostRoll" prefWidth="70"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="BACKGROUND MUSIC" styleClass="section-header"/>
+            <Label fx:id="lblMusicFile" text="No music selected"
+                   styleClass="music-label" wrapText="true"/>
+            <Button fx:id="btnPickMusic"  text="Choose Music File"
+                    onAction="#onPickMusic"  styleClass="btn-secondary" maxWidth="Infinity"/>
+            <Button fx:id="btnClearMusic" text="Clear Music"
+                    onAction="#onClearMusic" styleClass="btn-ghost" maxWidth="Infinity"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Label text="Auto-detects 2K / 3K / 4K / ACE via CS2 GSI. Just play — clips are made automatically after the match ends."
+                   styleClass="hint-label" wrapText="true"/>
+        </VBox>
+    </left>
+
+    <!-- CENTER: Highlights + Clips lists -->
+    <center>
+        <VBox styleClass="center-pane" spacing="0">
+
+            <!-- Highlights panel -->
+            <VBox styleClass="panel" VBox.vgrow="ALWAYS">
+                <HBox styleClass="panel-header" alignment="CENTER_LEFT" spacing="8">
+                    <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                    <Label text="HIGHLIGHTS DETECTED THIS SESSION" styleClass="panel-title"/>
+                </HBox>
+                <ListView fx:id="highlightList" styleClass="highlight-list" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Clips panel -->
+            <VBox styleClass="panel" VBox.vgrow="ALWAYS">
+                <HBox styleClass="panel-header" alignment="CENTER_LEFT" spacing="8">
+                    <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                    <Label text="EXPORTED CLIPS" styleClass="panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="Double-click to preview" styleClass="hint-inline"/>
+                </HBox>
+                <ListView fx:id="clipsList" styleClass="clips-list" VBox.vgrow="ALWAYS"
+                          onMouseClicked="#onClipDoubleClick"/>
+            </VBox>
+
+            <!-- Progress bar -->
+            <HBox styleClass="progress-bar-container" alignment="CENTER_LEFT" spacing="10">
+                <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                <ProgressBar fx:id="progressBar" progress="0" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Label fx:id="progressLabel" text="Waiting for CS2..." styleClass="progress-label"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

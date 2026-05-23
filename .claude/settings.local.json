@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/d/**)",
+      "Bash(mvn clean *)",
+      "Bash(mvn compile *)"
+    ]
+  }
+}
