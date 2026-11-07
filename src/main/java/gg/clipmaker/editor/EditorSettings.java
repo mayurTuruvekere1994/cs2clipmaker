@@ -6,8 +6,8 @@ package gg.clipmaker.editor;
  */
 public class EditorSettings {
 
-    private int    preRollSeconds   = 10;    // seconds before kill to include
-    private int    postRollSeconds  = 5;     // seconds after kill to include
+    private int    preRollSeconds   = 2;     // seconds before kill to include
+    private int    postRollSeconds  = 3;     // seconds after kill to include
     private boolean colorGrading    = true;  // apply cinematic colour grade
     private boolean showTextOverlays = true; // burn in kill count + player name
     private String musicFilePath    = null;  // null = no music
@@ -18,7 +18,8 @@ public class EditorSettings {
     public EditorSettings preRollSeconds(int v)     { this.preRollSeconds = v;    return this; }
     public EditorSettings postRollSeconds(int v)    { this.postRollSeconds = v;   return this; }
     public EditorSettings colorGrading(boolean v)   { this.colorGrading = v;      return this; }
-    public EditorSettings showTextOverlays(boolean v){ this.showTextOverlays = v; return this; }
+    public void showTextOverlays(boolean v){ this.showTextOverlays = v;
+    }
     public EditorSettings musicFilePath(String v)   { this.musicFilePath = v;     return this; }
     public EditorSettings playerNameFilter(String v) { this.playerNameFilter = v; return this; }
 

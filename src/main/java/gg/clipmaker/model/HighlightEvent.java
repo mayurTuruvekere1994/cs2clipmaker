@@ -1,5 +1,9 @@
 package gg.clipmaker.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Represents a kill highlight moment detected during a CS2 match.
  * Bookmarked by timestamp so the recorder can extract the clip later.
@@ -35,17 +39,22 @@ public class HighlightEvent {
     private final long lastKillTimestampMs; // wall-clock ms of the LAST kill — drives clip duration
     private final int roundKills;
     private final int roundHsKills;
+    private final List<Long> killTimestamps; // wall-clock ms for each individual kill, in order
     private String exportedClipPath;       // filled in after editor produces the clip
 
     public HighlightEvent(Type type, String playerName,
                           long firstKillMs, long lastKillMs,
-                          int roundKills, int roundHsKills) {
+                          int roundKills, int roundHsKills,
+                          List<Long> killTimestamps) {
         this.type = type;
         this.playerName = playerName;
         this.timestampMs = firstKillMs;
         this.lastKillTimestampMs = lastKillMs;
         this.roundKills = roundKills;
         this.roundHsKills = roundHsKills;
+        this.killTimestamps = killTimestamps != null
+            ? Collections.unmodifiableList(new ArrayList<>(killTimestamps))
+            : List.of(firstKillMs, lastKillMs);
     }
 
     // ── Getters ──────────────────────────────────────────────────────────────
@@ -56,6 +65,7 @@ public class HighlightEvent {
     public long getLastKillTimestampMs()  { return lastKillTimestampMs; }
     public int getRoundKills()            { return roundKills; }
     public int getRoundHsKills()          { return roundHsKills; }
+    public List<Long> getKillTimestamps() { return killTimestamps; }
     public String getExportedClipPath()   { return exportedClipPath; }
     public void setExportedClipPath(String path) { this.exportedClipPath = path; }
 

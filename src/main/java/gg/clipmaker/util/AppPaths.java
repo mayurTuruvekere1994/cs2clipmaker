@@ -50,4 +50,15 @@ public class AppPaths {
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         return CLIPS_DIR + File.separator + safe + "_" + ts + "_" + index + ".mp4";
     }
+
+    /**
+     * Returns a match highlights output path like:
+     * .../clips/highlights_video_20240501_143022.mp4
+     * .../clips/highlights_shorts_20240501_143022.mp4
+     */
+    public static String nextHighlightPath(String type) {
+        String ts = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return CLIPS_DIR + File.separator + "highlights_" + type + "_" + ts + ".mp4";
+    }
 }

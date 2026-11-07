@@ -157,6 +157,8 @@ public class AppController {
                 List<String> clips = editor.processSession(activeSession);
                 activeSession.setState(GameSession.State.DONE);
 
+                deleteRawFiles(rawVideo, activeSession.getRawAudioPath());
+
                 ui(() -> emit(onStatus, "✅ " + clips.size() + " clips ready in Videos/CS2ClipMaker/clips/"));
                 ui(() -> emit(onClipsReady, clips));
             } catch (Exception e) {
@@ -182,6 +184,18 @@ public class AppController {
      */
     public void manualStopAndProcess() {
         bgThread.submit(this::stopAndProcess);
+    }
+
+    private void deleteRawFiles(String video, String audio) {
+        for (String path : new String[]{video, audio}) {
+            if (path == null) continue;
+            java.io.File f = new java.io.File(path);
+            if (f.delete()) {
+                log.info("Deleted raw file: {}", path);
+            } else if (f.exists()) {
+                log.warn("Could not delete raw file: {}", path);
+            }
+        }
     }
 
     public void shutdown() {

@@ -35,13 +35,14 @@ public class CS2GSIServer {
     private HttpServer server;
 
     // State tracked between GSI ticks
-    private int     lastRoundKills    = 0;
-    private long    firstKillMs       = 0;   // wall-clock ms when this round's first kill landed
-    private long    lastKillMs        = 0;   // wall-clock ms of the most recent kill this round
-    private int     lastRoundHsKills  = 0;
-    private String  pendingPlayerName = "";
-    private String  lastPhase         = "";
-    private boolean matchActive       = false;
+    private int          lastRoundKills     = 0;
+    private long         firstKillMs        = 0;   // wall-clock ms when this round's first kill landed
+    private long         lastKillMs         = 0;   // wall-clock ms of the most recent kill this round
+    private final List<Long> killTimestampsList = new ArrayList<>(); // one entry per kill this round
+    private int          lastRoundHsKills   = 0;
+    private String       pendingPlayerName  = "";
+    private String       lastPhase          = "";
+    private boolean      matchActive        = false;
 
     // Listeners
     private final List<Consumer<HighlightEvent>> highlightListeners = new ArrayList<>();
@@ -121,9 +122,9 @@ public class CS2GSIServer {
                 resetRoundState();
                 log.info("Match started — map: {}", mapName);
                 matchStartListeners.forEach(Runnable::run);
-            } else if (!inLive && wasActive && ("gameover".equals(phase) || "intermission".equals(phase))) {
+            } else if (!inLive && wasActive && "gameover".equals(phase)) {
+                // Only end on gameover — intermission is halftime (CT↔T swap), not match end.
                 matchActive = false;
-                // Flush any kills from the final round
                 fireRoundHighlightIfPending();
                 resetRoundState();
                 log.info("Match ended");
@@ -139,8 +140,10 @@ public class CS2GSIServer {
 
             if (roundKills > lastRoundKills) {
                 // Record timestamp of the very first kill of this round
-                if (lastRoundKills == 0) firstKillMs = System.currentTimeMillis();
-                lastKillMs       = System.currentTimeMillis();
+                long nowMs = System.currentTimeMillis();
+                if (lastRoundKills == 0) firstKillMs = nowMs;
+                lastKillMs       = nowMs;
+                killTimestampsList.add(nowMs);
                 lastRoundHsKills = roundHsKills;
                 pendingPlayerName = playerName;
 
@@ -184,7 +187,8 @@ public class CS2GSIServer {
         HighlightEvent event = new HighlightEvent(
             type, pendingPlayerName,
             firstKillMs, lastKillMs,
-            lastRoundKills, lastRoundHsKills);
+            lastRoundKills, lastRoundHsKills,
+            new ArrayList<>(killTimestampsList));
 
         log.info("Round highlight: {}", event);
         if (activeSession != null) activeSession.addHighlight(event);
@@ -195,6 +199,7 @@ public class CS2GSIServer {
         lastRoundKills   = 0;
         firstKillMs      = 0;
         lastKillMs       = 0;
+        killTimestampsList.clear();
         lastRoundHsKills = 0;
         pendingPlayerName = "";
     }

@@ -113,6 +113,9 @@ public class ScreenRecorder {
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(true);
+        // Timestamp the start NOW — before the 1500 ms wait — so recordingStartMs
+        // matches when gdigrab actually begins capturing, keeping A/V in sync.
+        recordingStartMs = System.currentTimeMillis();
         ffmpegProcess = pb.start();
 
         // Drain FFmpeg output on a daemon thread so the pipe never stalls
@@ -136,8 +139,7 @@ public class ScreenRecorder {
             return false;
         }
 
-        recording        = true;
-        recordingStartMs = System.currentTimeMillis();
+        recording = true;
         return true;
     }
 
